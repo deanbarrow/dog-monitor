@@ -1,0 +1,155 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1, shr.my-5ink-to-fit=no')
+    //- link(href='https://use.fontawesome.com/releases/v5.8.2/css/all.css' rel='stylesheet')
+    link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap' rel='stylesheet')
+    link(href='https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.css' rel='stylesheet')
+    script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js')
+    title Dog Monitor
+  body.my-3
+
+    section#breathing
+      .container
+        .row
+          .col-md-12
+            h2 Breathing Rate
+
+      .container
+        .row
+          .col-md-6.my-3
+            .input-group
+              input#timespan.form-control(type='text', value='60.00')
+              button.btn(type='button', onclick='start()') Start
+              button.btn(type='button', onclick='reset()') Reset
+
+          .col-md-6.my-3
+            form(action='/#breathing', method='POST')
+              .input-group
+                input#postBreathing.form-control(type='text' name='postBreathing', placeholder='Rate', autocomplete='off')
+                button.btn.btn-primary(type='submit') Submit
+
+          script.
+            let t, c = 6000;
+
+            function display() {
+                document.getElementById('timespan').value = (c/100).toFixed(2);
+            }
+
+            function start() {
+                display();
+                if (c !== 0) {
+                    c = c - 1;
+                    t = setTimeout(start, 10);
+                }
+            }
+
+            function reset() {
+                clearTimeout(t);
+                c = 6000;
+                display();
+            }
+            
+      .container
+        .row
+          .col-md-12
+            #lineBreathing(style="width: 100%; height: 500px;")
+
+        script.
+          async function breathingChart() {
+
+            var breathing = !{JSON.stringify(breathing)}    
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'Date');
+            data.addColumn('number', 'Rate');
+
+            let rows = []
+            breathing.forEach(c =>{
+              rows.push([new Date(c.timestamp), c.rate])
+            })
+            data.addRows(rows)
+
+            new google.visualization.LineChart(document.getElementById('lineBreathing')).draw(data, {
+              curveType: 'function',
+              legend: { position: 'bottom' }
+            })
+          }
+
+      .container
+        .row
+          .col-md-12
+            table.table
+              thead
+                tr
+                  th(scope='col') Date
+                  th(scope='col') Rate
+              tbody
+                for item in breathing.slice(0,10)
+                  tr
+                    td(scope='row') #{moment(item.timestamp).format('lll')}
+                    td(scope='row') #{item.rate}
+    hr.my-3
+
+    section#weight
+      .container
+        .row
+          .col-md-12
+            h2 Weight
+
+      .container
+        .row
+          .col-md-6.my-3
+            form(action='/#weight', method='POST')
+              .input-group
+                input#postWeight.form-control(type='text' name='postWeight', placeholder='Weight', autocomplete='off')
+                button.btn.btn-primary(type='submit') Submit
+
+      .container
+        .row
+          .col-md-12
+            #lineWeight(style="width: 100%; height: 500px;")
+
+        script.
+          async function weightChart() {
+
+            var weight = !{JSON.stringify(weight)}    
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'Date');
+            data.addColumn('number', 'Rate');
+
+            let rows = []
+            weight.forEach(c =>{
+              rows.push([new Date(c.timestamp), c.weight])
+            })
+            data.addRows(rows)
+
+            new google.visualization.LineChart(document.getElementById('lineWeight')).draw(data, {
+              curveType: 'function',
+              legend: { position: 'bottom' }
+            })
+          }
+
+      .container
+        .row
+          .col-md-12
+            table.table
+              thead
+                tr
+                  th(scope='col') Date
+                  th(scope='col') Weight
+              tbody
+                for item in weight.slice(0,10)
+
+                  tr
+                    td(scope='row') #{moment(item.timestamp).format('lll')}
+                    td(scope='row') #{item.weight}
+            
+    script(type='text/javascript' src='https://www.gstatic.com/charts/loader.js')
+    script.
+      google.charts.load('current', {'packages':['corechart', 'bar', 'line']});
+      google.charts.setOnLoadCallback(drawCharts);
+      async function drawCharts() {
+        breathingChart()
+        weightChart()
+      }
