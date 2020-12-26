@@ -3,7 +3,6 @@ html(lang='en')
   head
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1, shr.my-5ink-to-fit=no')
-    //- link(href='https://use.fontawesome.com/releases/v5.8.2/css/all.css' rel='stylesheet')
     link(href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap' rel='stylesheet')
     link(href='https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.css' rel='stylesheet')
     script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js')
@@ -27,7 +26,7 @@ html(lang='en')
           .col-md-6.my-3
             form(action='/#breathing', method='POST')
               .input-group
-                input#postBreathing.form-control(type='text' name='postBreathing', placeholder='Rate', autocomplete='off')
+                input#postBreathing.form-control(type='number' name='postBreathing', placeholder='Rate', autocomplete='off')
                 button.btn.btn-primary(type='submit') Submit
 
           script.
@@ -39,9 +38,15 @@ html(lang='en')
 
             function start() {
                 display();
-                if (c !== 0) {
-                    c = c - 1;
-                    t = setTimeout(start, 10);
+                if (c === 6000){
+                  beep()
+                  c = c - 1;
+                  t = setTimeout(start, 10);
+                }else if(c === 0) {
+                  beep(3)
+                }else{
+                  c = c - 1;
+                  t = setTimeout(start, 10);
                 }
             }
 
@@ -102,7 +107,7 @@ html(lang='en')
           .col-md-6.my-3
             form(action='/#weight', method='POST')
               .input-group
-                input#postWeight.form-control(type='text' name='postWeight', placeholder='Weight', autocomplete='off')
+                input#postWeight.form-control(type='number' name='postWeight', placeholder='Weight', autocomplete='off')
                 button.btn.btn-primary(type='submit') Submit
 
       .container
@@ -152,4 +157,60 @@ html(lang='en')
       async function drawCharts() {
         breathingChart()
         weightChart()
+      }
+      
+
+      // https://github.com/kapetan/browser-beep/
+      var RAMP_VALUE = 0.00001
+      var RAMP_DURATION = 1
+
+      const options = {}
+      window.AudioContext = window.AudioContext || window.webkitAudioContext
+      var context = new window.AudioContext()
+      var frequency = 500
+      var interval = 250
+
+      var play = function () {
+        var currentTime = context.currentTime
+        var osc = context.createOscillator()
+        var gain = context.createGain()
+
+        osc.connect(gain)
+        gain.connect(context.destination)
+
+        gain.gain.setValueAtTime(gain.gain.value, currentTime)
+        gain.gain.exponentialRampToValueAtTime(RAMP_VALUE, currentTime + RAMP_DURATION)
+
+        osc.onended = function () {
+          gain.disconnect(context.destination)
+          osc.disconnect(gain)
+        }
+
+        osc.type = 'sine'
+        osc.frequency.value = frequency
+        osc.start(currentTime)
+        osc.stop(currentTime + RAMP_DURATION)
+      }
+
+      var beep = function (times) {
+        if (!times) times = 1
+
+        ;(function loop (i) {
+          play()
+          if (++i < times) setTimeout(loop, interval, i)
+        })(0)
+      }
+
+      beep.destroy = function () {
+        if (!options.context) context.close()
+      }
+
+    style.
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type=number] {
+        -moz-appearance: textfield;
       }
