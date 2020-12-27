@@ -27,7 +27,8 @@ html(lang='en')
           .col-md-6.my-3
             form(action='/#breathing', method='POST')
               .input-group
-                input#postBreathing.form-control(type='number' name='postBreathing', placeholder='Rate', autocomplete='off', min='0', step='0.1')
+                input#postBreathing.form-control(type='number' name='postBreathing', placeholder='Rate', autocomplete='off', min='0', step='0.1', required, style='max-width: 15%;')
+                input.form-control(type='text' name='postComment', placeholder='Comment (optional)', autocomplete='off')
                 button.btn.btn-primary(type='submit') Submit
 
           script.
@@ -90,11 +91,13 @@ html(lang='en')
                 tr
                   th(scope='col') Date
                   th(scope='col') Rate
+                  th(scope='col') Comments
               tbody
                 for item in breathing.slice(0,10)
                   tr
                     td(scope='row') #{moment(item.timestamp).format('lll')}
                     td(scope='row') #{item.rate}
+                    td(scope='row') #{item.comment}
     hr.my-3
 
     section#weight
@@ -108,7 +111,8 @@ html(lang='en')
           .col-md-6.my-3
             form(action='/#weight', method='POST')
               .input-group
-                input#postWeight.form-control(type='number' name='postWeight', placeholder='Weight', autocomplete='off', min='0', step='0.1')
+                input#postWeight.form-control(type='number' name='postWeight', placeholder='Weight', autocomplete='off', min='0', step='0.1', required, style='max-width: 20%;')
+                input.form-control(type='text' name='postComment', placeholder='Comment (optional)', autocomplete='off')
                 button.btn.btn-primary(type='submit') Submit
 
       .container
@@ -144,12 +148,14 @@ html(lang='en')
                 tr
                   th(scope='col') Date
                   th(scope='col') Weight
+                  th(scope='col') Comments
               tbody
                 for item in weight.slice(0,10)
 
                   tr
                     td(scope='row') #{moment(item.timestamp).format('lll')}
                     td(scope='row') #{item.weight}
+                    td(scope='row') #{item.comment}
             
     script(type='text/javascript' src='https://www.gstatic.com/charts/loader.js')
     script.

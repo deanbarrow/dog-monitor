@@ -32,7 +32,7 @@ app.get('/', async function (req, res) {
 
 app.post('/', async (req, res) => {
   const { body } = req
-  const { postBreathing, postWeight } = body
+  const { postBreathing, postWeight, postComment } = body
   let data
 
   try{
@@ -52,13 +52,15 @@ app.post('/', async (req, res) => {
     if(postBreathing)
       breathing.push({
         timestamp,
-        rate: parseFloat(postBreathing)
+        rate: parseFloat(postBreathing),
+        comment: postComment.trim()
       })
     
     if(postWeight)
       weight.push({
         timestamp,
-        weight: parseFloat(postWeight)
+        weight: parseFloat(postWeight),
+        comment: postComment.trim()
       })
 
     data = {
