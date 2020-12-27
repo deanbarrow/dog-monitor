@@ -69,7 +69,7 @@ html(lang='en')
             var breathing = !{JSON.stringify(breathing)}    
             var data = new google.visualization.DataTable();
             data.addColumn('date', 'Date');
-            data.addColumn('number', 'Rate');
+            data.addColumn('number', 'Breathing Rate');
 
             let rows = []
             breathing.forEach(c =>{
@@ -126,7 +126,7 @@ html(lang='en')
             var weight = !{JSON.stringify(weight)}    
             var data = new google.visualization.DataTable();
             data.addColumn('date', 'Date');
-            data.addColumn('number', 'Rate');
+            data.addColumn('number', 'Weight');
 
             let rows = []
             weight.forEach(c =>{
